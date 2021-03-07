@@ -1,4 +1,4 @@
-% Copyright 2009-2011,2015-2019 Dominik Wagenfuehr <dominik.wagenfuehr@deesaster.org>
+% Copyright 2009-2011,2015-2020,2021 Dominik Wagenfuehr <dominik.wagenfuehr@deesaster.org>
 % Dieses Dokument unterliegt der Creative-Commons-Lizenz
 % "Namensnennung-Weitergabe unter gleichen Bedingungen 4.0 International"
 % [http://creativecommons.org/licenses/by-sa/4.0/deed.de].
@@ -25,7 +25,9 @@
 % Das erste Argument ist der Paketname für pdfTeX, das zweite Argument
 % der Schriftname für XeTeX und LuaTeX.
 % Als Standard wird hier TeX Gyre Pagella benutzt (Paket "tex-gyre").
-\SetzeSchrift{tgpagella}{TeX Gyre Pagella}     % optional
+% Als optionales Argument kann eine neue Schriftgroesse
+% (abweichend von den 12pt von oben) angegeben werden.
+\SetzeSchrift[12pt]{tgpagella}{TeX Gyre Pagella}          % optional
 
 % Umschalten auf serifenlose Schrift. Wenn gewuenscht, einkommentieren.
 % Achtung: Nicht jede serifenlose Schrift kommt mit den Kapitaelchen in
@@ -44,11 +46,12 @@
 \VollerName{Eva Mustermann}
 \AbsenderStrasse{Musterweg 42}
 \AbsenderPLZOrt{12345 Berlin}
+\AbsenderLand{Deutschland}           % optional
 % Als erstes Argument kann man beim Telefon eine Angabe
 % davor angeben. Der Wert darf auch leer sein.
 % Bei Telefonnummer ggf. Laenderkennung ergaenzen, wenn
 % die Telefonnummer nicht im Land des Empfaengers ist.
-\bwTelefon{Tel.:}{0170 567890}
+\bwTelefon{Tel.:}{0170 567890}       % optional
 %\bwTelefon{\Telefon}{+49 170 567890}
 % Als erstes Argument kann man bei der E-Mail eine Angabe
 % davor angeben (z.B. "E-Mail:". Der Wert darf auch leer sein.
@@ -56,8 +59,8 @@
 % mit der die Mailadresse dargestellt werden soll.
 % Standard ist "black"  als Farbe. Beispiel: \EMail[orange]{...}{...}
 % Achtung: Die Farbe wird fuer alle Links benutzt, damit es einheitlich aussieht.
-\bwEMail[Blue]{}{eva.mustermann@musterstadt.de}
-%\bwEMail{\Email}{eva.mustermann@musterstadt.de}
+\bwEMail[Blue]{}{eva.mustermann@musterstadt.de}         % optional
+%\bwEMail{\Email}{eva.mustermann@musterstadt.de}         % optional
 \Ort{Berlin}
 \Datum{\HeutigerTag}
 \Geburtstag{1. Januar 1985}
@@ -66,13 +69,11 @@
 % Leer lassen oder auskommentieren, wenn nichts angezeigt werden soll.
 \Details{ledig, ortsungebunden} % verheiratet, 2 Kinder, etc.
 \Ausbildungsgrad{Promovierte Veterinärmedizinerin}    % optional
-% Optionales Xing- und Linkedin-Profil
-% Beides wird nur auf der Persoenlichen Seite angezeigt,
+% Optionale Profile für verschiedene Seiten (z.B. Xing, Linkedin, Github).
+% Alle werden nur auf der persoenlichen Seite angezeigt,
 % nicht im Anschreiben.
 \XingProfil{Eva\_Mustermann}
 \LinkedInProfil{evamustermann}
-% Optionales GitHub-Profil
-% Anzeige nur auf der Persoenlichen Seite, nicht im Anschreiben.
 \GitHubProfil{evamustermann}
 
 % Die Unterschrift sollte als Bilddatei vorliegen.
@@ -100,6 +101,7 @@
 \AdressatNachname{Funkel}                % ggf. optional
 \AnschriftStrasse{Route 66}
 \AnschriftPLZOrt{00000 Havenfürst}
+%\AnschriftLand{DEUTSCHLAND}              % optional
 % Als optionales Argument hat der Titel eine Kurzform, die nur im Briefkopf
 % benutzt wird. Wenn das optionale Argument fehlt, wird die normale Angabe 
 % fuer Briefkopf und Anrede benutzt.

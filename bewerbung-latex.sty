@@ -3,7 +3,7 @@
 % "Namensnennung-Weitergabe unter gleichen Bedingungen 4.0 International"
 % [http://creativecommons.org/licenses/by-sa/4.0/deed.de].
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
-\ProvidesPackage{bewerbung-latex}[2019/10/30 v2.0]
+\ProvidesPackage{bewerbung-latex}[2021/02/25 v2.3]
 \DeclareOption*{\PassOptionToClass{scrartcl}{\CurrentOption}}
 \ExecuteOptions{final,indexauto}
 \ProcessOptions*\relax
@@ -49,7 +49,12 @@
 
 % Eigene Fusszeile festlegen, Kopfzeile leer
 \pagestyle{scrheadings}
-\cofoot{\DefVollerName, \DefAbsenderStrasse, \DefAbsenderPLZOrt, \DefTelefon}
+\cofoot{\DefVollerName, \DefAbsenderStrasse, \DefAbsenderPLZOrt, %
+        \ifthenelse{\equal{\DefAbsenderLand}{}}{%
+        }{%
+            \DefAbsenderLand, %
+        }%
+        \DefTelefon}
 \setkomafont{pagefoot}{\upshape\vspace*{0.2\baselineskip}}
 
 % Umschalten auf serifenlose Schrift.
@@ -66,12 +71,13 @@
 }%
 
 % Neue Schrift setzen.
-\newcommand*{\SetzeSchrift}[2]{%
+\newcommand*{\SetzeSchrift}[3][12pt]{%
     \ifPDFTeX%
-        \RequirePackage{#1}
+        \RequirePackage{#2}
     \else%
-        \setmainfont{#2}
+        \setmainfont{#3}
     \fi%
+    \KOMAoption{fontsize=#1}%
 }%
 
 % Sprache einstellen
@@ -123,6 +129,7 @@
 \newcommand*{\DefVollerName}{}
 \newcommand*{\DefAbsenderStrasse}{}
 \newcommand*{\DefAbsenderPLZOrt}{}
+\newcommand*{\DefAbsenderLand}{}
 \newcommand*{\DefTelefon}{}
 \newcommand*{\DefEMail}{}
 \newcommand*{\DefOrtDatum}{}
@@ -144,6 +151,7 @@
 \newcommand*{\VollerName}[1]{\renewcommand*{\DefVollerName}{#1}}
 \newcommand*{\AbsenderStrasse}[1]{\renewcommand*{\DefAbsenderStrasse}{#1}}
 \newcommand*{\AbsenderPLZOrt}[1]{\renewcommand*{\DefAbsenderPLZOrt}{#1}}
+\newcommand*{\AbsenderLand}[1]{\renewcommand*{\DefAbsenderLand}{#1}}
 \newcommand*{\bwTelefon}[2]{\renewcommand*{\DefTelefon}{#1{} #2}}
 \newcommand*{\bwEMail}[3][black]{%
     \hypersetup{urlcolor=#1}%
@@ -167,14 +175,22 @@
     \renewcommand*{\DefBewerberFotoParam}{height=#1}%
     \renewcommand*{\DefBewerberFoto}{#2}%
 }%
+% Die Anzahl der initialen Zeilen muss der Anzahl
+% der moeglichen Profile entsprechen.
+% Derzeit gibt es 3 Profile und 3 Leerzeilen als Puffer
+\newcounter{ProfilZeilen}%
+\setcounter{ProfilZeilen}{3}%
 \newcommand*{\XingProfil}[1]{%
-    \renewcommand*{\DefXingProfil}{Xing: \href{https://www.xing.com/profile/#1/}{#1}}%
+    \renewcommand*{\DefXingProfil}{Xing: \href{https://www.xing.com/profile/#1/}{#1}\\}%
+    \addtocounter{ProfilZeilen}{-1}%
 }
 \newcommand*{\LinkedInProfil}[1]{%
-    \renewcommand*{\DefLinkedInProfil}{LinkedIn: \href{https://www.linkedin.com/in/#1}{#1}}%
+    \renewcommand*{\DefLinkedInProfil}{LinkedIn: \href{https://www.linkedin.com/in/#1}{#1}\\}%
+    \addtocounter{ProfilZeilen}{-1}%
 }
 \newcommand*{\GitHubProfil}[1]{%
-    \renewcommand*{\DefGitHubProfil}{GitHub: \href{https://github.com/#1/}{#1}}%
+    \renewcommand*{\DefGitHubProfil}{GitHub: \href{https://github.com/#1/}{#1}\\}%
+    \addtocounter{ProfilZeilen}{-1}%
 }
 
 % Ausrichtung des Absenders
@@ -193,9 +209,32 @@
 
 % Absender
 \newcommand{\AbsenderRechts}[1][\normalsize]{%
+    \hspace*{\fill}\parbox[t][3cm]{7cm}{%
+        \rightline{\textbf{#1\DefVollerName}}
+        \rightline{\DefAbsenderStrasse}
+        \rightline{\DefAbsenderPLZOrt}
+        \ifthenelse{\equal{\DefAbsenderLand}{}}{%
+        }{%
+            \rightline{\DefAbsenderLand}
+        }%
+        \ifthenelse{\equal{\DefTelefon}{}}{%
+        }{%
+            \rightline{\DefTelefon}
+        }%
+        \rightline{\DefEMail}
+        \ifthenelse{\equal{\DefTelefon}{}}{%
+            \rightline{}
+        }{}%
+    }%
+}%
+\newcommand{\AbsenderRechtsVariabel}[1][\normalsize]{%
     \rightline{\textbf{#1\DefVollerName}}
     \rightline{\DefAbsenderStrasse}
     \rightline{\DefAbsenderPLZOrt}
+    \ifthenelse{\equal{\DefAbsenderLand}{}}{%
+    }{%
+        \rightline{\DefAbsenderLand}
+    }%
     \ifthenelse{\equal{\DefTelefon}{}}{%
     }{%
         \rightline{\DefTelefon}
@@ -206,20 +245,26 @@
     }{}%
 }%
 \newcommand{\AbsenderLinks}[1][\normalsize]{%
-    \textbf{#1\DefVollerName}\\
-    \DefAbsenderStrasse\\
-    \DefAbsenderPLZOrt\\
-    \ifthenelse{\equal{\DefTelefon}{}}{%
-    }{%
-        \DefTelefon\\
+    \parbox[t][4cm]{7cm}{%
+        \textbf{#1\DefVollerName}\\
+        \DefAbsenderStrasse\\
+        \DefAbsenderPLZOrt\\
+        \ifthenelse{\equal{\DefAbsenderLand}{}}{%
+        }{%
+            \DefAbsenderLand\\
+        }%
+        \ifthenelse{\equal{\DefTelefon}{}}{%
+        }{%
+            \DefTelefon\\
+        }%
+        \DefEMail\\
+        \ifthenelse{\equal{\DefTelefon}{}}{%
+            \\
+        }{}%
     }%
-    \DefEMail\\
-    \ifthenelse{\equal{\DefTelefon}{}}{%
-        \\
-    }{}%
     % Ich weiss nicht, wieso ich hier eine Leerzeile mehr bekomme als
     % bei rechtsbuendig, aber ich korrigier das manuell.
-    \vspace{-\baselineskip}%
+    %\vspace{-\baselineskip}%
 }%
 \newcommand{\Absender}[1][\normalsize]{%
     \ifthenelse{\equal{\DefAbsenderAusrichtung}{links}}{%
@@ -238,6 +283,7 @@
 \newcommand*{\DefAdressatNachname}{}
 \newcommand*{\DefAnschriftStrasse}{}
 \newcommand*{\DefAnschriftPLZOrt}{}
+\newcommand*{\DefAnschriftLand}{}
 \newcommand*{\DefAnredeKopf}{}
 \newcommand*{\DefAnredeText}{ Damen und Herren}
 \newcommand*{\DefZweiterAdressatTitel}{}
@@ -266,6 +312,7 @@
 \newcommand*{\AdressatNachname}[1]{\renewcommand*{\DefAdressatNachname}{#1}}
 \newcommand*{\AnschriftStrasse}[1]{\renewcommand*{\DefAnschriftStrasse}{#1}}
 \newcommand*{\AnschriftPLZOrt}[1]{\renewcommand*{\DefAnschriftPLZOrt}{#1}}
+\newcommand*{\AnschriftLand}[1]{\renewcommand*{\DefAnschriftLand}{#1}}
 \newcommand*{\Anrede}[1]{%
     \ifthenelse{\equal{\DefAdressatNachname}{}}{%
         \renewcommand*{\DefAnredeKopf}{}%
@@ -411,6 +458,9 @@
         }%
         \DefAnschriftStrasse\\
         \DefAnschriftPLZOrt\\
+        \ifthenelse{\equal{\DefAnschriftLand}{}}{}{%
+            \DefAnschriftLand\\
+        }%
     }%
 }%
 
@@ -831,31 +881,14 @@
     }
 
     \begin{spacing}{1.3}
-        \AbsenderRechts[\large]
+        \AbsenderRechtsVariabel[\large]
 
-        % Profile anzeigen, wenn nicht leer.
-        \ifthenelse{\equal{\DefXingProfil}{}}{}{%
-            \rightline{\DefXingProfil}%
-        }%
-        \ifthenelse{\equal{\DefLinkedInProfil}{}}{}{%
-            \rightline{\DefLinkedInProfil}%
-        }%
-        \ifthenelse{\equal{\DefGitHubProfil}{}}{}{%
-            \rightline{\DefGitHubProfil}%
-        }%
-
-        % Leerzeilen für leere Profile am Ende des Profilblocks ergänzen.
-        \ifthenelse{\equal{\DefXingProfil}{}}{%
-            \rightline{}%
-        }{}%
-        \ifthenelse{\equal{\DefLinkedInProfil}{}}{%
-            \rightline{}%
-        }{}%
-        \ifthenelse{\equal{\DefGitHubProfil}{}}{%
-            \rightline{}%
-        }{}%
-
-        \vspace{1.5\baselineskip}
+        \hspace*{\fill}\DefXingProfil%
+        \hspace*{\fill}\DefLinkedInProfil%
+        \hspace*{\fill}\DefGitHubProfil%
+        % Abstand hinzufuegen fuer fehlende Profilangaben (wird automatisch berechnet)
+        \vspace*{\theProfilZeilen\baselineskip}%
+        \vspace*{\baselineskip}%
 
         \ifthenelse{\equal{\DefSprache}{British} \OR \equal{\DefSprache}{American}}{%
             \rightline{born on \DefGeburtstag}
